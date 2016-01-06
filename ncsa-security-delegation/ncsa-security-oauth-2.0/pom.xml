@@ -12,6 +12,7 @@
     <artifactId>ncsa-security-oauth-2.0</artifactId>
     <packaging>jar</packaging>
     <name>NCSA delegation OAuth 2.0 support</name>
+    <version>${revision}</version>
     <dependencies>
         <dependency>
             <groupId>edu.uiuc.ncsa.security.delegation</groupId>
