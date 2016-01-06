@@ -6,8 +6,10 @@ import edu.uiuc.ncsa.security.delegation.server.issuers.PAIssuer;
 import edu.uiuc.ncsa.security.delegation.server.request.PARequest;
 import edu.uiuc.ncsa.security.delegation.server.request.PAResponse;
 import edu.uiuc.ncsa.security.delegation.token.TokenForge;
+import edu.uiuc.ncsa.security.oauth_2_0.OA2Utilities;
 
 import java.net.URI;
+import java.util.Map;
 
 /**
  * Protected asset (cert) issuer for Oauth 2 class
@@ -31,10 +33,15 @@ public class PAI2 extends AbstractIssuer implements PAIssuer {
     */
     public PAResponse processProtectedAsset(PARequest paRequest) {
         try {
-         //   Map<String, String> reqParamMap = OA2Utilities.getParameters(paRequest.getServletRequest());
+        	
+        	// As mentined in the PAIResponse2 doc the request parameters should be included in the response
+        	// so that we can do some processing on them further down the line
+            Map<String, String> reqParamMap = OA2Utilities.getParameters(paRequest.getServletRequest());
 
             PAIResponse2 paResponse = new PAIResponse2();
             paResponse.setAccessToken(paRequest.getAccessToken()); // return the right access token with this, so the caller can track it
+            paResponse.setParameters(reqParamMap);
+            
             return paResponse;
         } catch (Exception x) {
             if(x instanceof RuntimeException){

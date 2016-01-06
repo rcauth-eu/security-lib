@@ -27,6 +27,10 @@ public interface OA2Constants {
     public static String REQUEST = "request";
     public static String REQUEST_URI = "request_uri";
     public static String AUTHORIZATION_TIME = "auth_time";
+    
+	public static String VONAME = "voname";
+	public static String VOMSES = "vomses";
+	public static String PROXY_LIFETIME = "proxylifetime";
 
     public static String PROMPT_NONE = "none";
     public static String PROMPT_LOGIN = "login";
