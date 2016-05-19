@@ -35,16 +35,17 @@ public class MyX509Proxy extends MyX509Certificates {
 		return proxyKey;
 	}
     
-    public String getX509ProxyPEM() throws CertificateEncodingException {     	
-    	return getX509CertificatesPEM();	
-    }
-    
-    @Override
-    public String getX509CertificatesPEM() throws CertificateEncodingException {
-
-
+    /**
+     * Return the Proxy Certificate complete with. This method will include the 
+     * proxy Private Key into the second place in the PEM formatted certificate chain
+     * 
+     * @return the Proxy Certificate in PEM format
+     * @throws CertificateEncodingException In case the certificate data is corrupt
+     */
+    public String getX509ProxyPEM() throws CertificateEncodingException {     
+    	
         String pem = "";
-       
+        
         if ( x509Certificates.length > 0 ) {
         	pem += CertUtil.toPEM(x509Certificates[0]) + "\n";
         }
@@ -56,8 +57,22 @@ public class MyX509Proxy extends MyX509Certificates {
         for (int i = 1; i < x509Certificates.length; ++i){
             pem += CertUtil.toPEM(x509Certificates[i]) + "\n";
         }
+        return pem;	
+        
+    }
+    
+    /*
+    @Override
+    public String getX509CertificatesPEM() throws CertificateEncodingException {
+
+
+        String pem = "";
+        for (int i = 0; i < x509Certificates.length; ++i){
+            pem += CertUtil.toPEM(x509Certificates[i]) + "\n";
+        }
         return pem;
 	
     }
+    */
     
 }
