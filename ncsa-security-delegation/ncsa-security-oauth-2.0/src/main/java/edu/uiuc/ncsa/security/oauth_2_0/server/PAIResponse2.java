@@ -5,6 +5,7 @@ import edu.uiuc.ncsa.security.core.exceptions.NotImplementedException;
 import edu.uiuc.ncsa.security.delegation.server.request.PAResponse;
 import edu.uiuc.ncsa.security.delegation.token.AccessToken;
 import edu.uiuc.ncsa.security.delegation.token.MyX509Certificates;
+import edu.uiuc.ncsa.security.delegation.token.MyX509Proxy;
 import edu.uiuc.ncsa.security.delegation.token.ProtectedAsset;
 
 import javax.servlet.http.HttpServletResponse;
@@ -100,7 +101,12 @@ public class PAIResponse2 extends IResponse2 implements PAResponse {
             OutputStream out = response.getOutputStream();
             OutputStreamWriter osw = new OutputStreamWriter(out);
 
-            out.write(certs.getX509CertificatesPEM().getBytes());
+            if ( certs instanceof MyX509Proxy )  {
+            	out.write(((MyX509Proxy) certs).getX509ProxyPEM().getBytes() );
+            } else {
+            	out.write(certs.getX509CertificatesPEM().getBytes());
+            }
+            
             out.flush();
             out.close();
 
