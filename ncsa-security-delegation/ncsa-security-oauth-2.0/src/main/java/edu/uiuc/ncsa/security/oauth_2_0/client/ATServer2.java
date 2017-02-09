@@ -2,6 +2,7 @@ package edu.uiuc.ncsa.security.oauth_2_0.client;
 
 import edu.uiuc.ncsa.security.core.exceptions.GeneralException;
 import edu.uiuc.ncsa.security.core.exceptions.NFWException;
+import edu.uiuc.ncsa.security.core.util.MyLoggingFacade;
 import edu.uiuc.ncsa.security.delegation.client.request.ATRequest;
 import edu.uiuc.ncsa.security.delegation.client.request.ATResponse;
 import edu.uiuc.ncsa.security.delegation.client.server.ATServer;
@@ -113,25 +114,30 @@ public class ATServer2 extends ASImpl implements ATServer {
             throw new GeneralException("Error: incorrect token type");
         }
         // Fix for OAUTH-164, id_token support follows.
+	JSONWebKeys keys = null;
+	JSONObject claims = null;
+	// Do not force adding a .well-known URI to the config, in order to
+	// allow new client software to work with old server software.
         if(wellKnown == null){
-            throw new NFWException("Error: no well-known URI has been configured. Please add this to the configuration file.");
-        }
-        String rawResponse = getServiceClient().getRawResponse(wellKnown);
-        JSON rawJSON = JSONSerializer.toJSON(rawResponse);
+            //throw new NFWException("Error: no well-known URI has been configured. Please add this to the configuration file.");
+	    MyLoggingFacade logger = new MyLoggingFacade(getClass().getSimpleName());
+	    logger.warn("NOT verifying token: no well-known URI has been configured. Please add a wellKnownUri node to the configuration file.");
+        } else {
+	    String rawResponse = getServiceClient().getRawResponse(wellKnown);
+	    JSON rawJSON = JSONSerializer.toJSON(rawResponse);
 
-        if (!(rawJSON instanceof JSONObject)) {
-            throw new IllegalStateException("Error: Attempted to get JSON Object but returned result is not JSON");
-        }
-        JSONObject json = (JSONObject) rawJSON;
-        String rawKeys = getServiceClient().getRawResponse(json.getString("jwks_uri"));
-        JSONWebKeys keys = null;
-        JSONObject claims = null;
-        try {
-            keys = JSONWebKeyUtil.fromJSON(rawKeys);
-        } catch (Throwable e) {
-            throw new GeneralException("Error getting keys", e);
-        }
-        claims = IDTokenUtil.verifyAndReadIDToken(jsonObject.getString(ID_TOKEN), keys);
+	    if (!(rawJSON instanceof JSONObject)) {
+		throw new IllegalStateException("Error: Attempted to get JSON Object but returned result is not JSON");
+	    }
+	    JSONObject json = (JSONObject) rawJSON;
+	    String rawKeys = getServiceClient().getRawResponse(json.getString("jwks_uri"));
+	    try {
+		keys = JSONWebKeyUtil.fromJSON(rawKeys);
+	    } catch (Throwable e) {
+		throw new GeneralException("Error getting keys", e);
+	    }
+	}
+	claims = IDTokenUtil.verifyAndReadIDToken(jsonObject.getString(ID_TOKEN), keys);
 
         // Now we have to check claims.
         if (!claims.getString(AUDIENCE).equals(atRequest.getClient().getIdentifierString())) {

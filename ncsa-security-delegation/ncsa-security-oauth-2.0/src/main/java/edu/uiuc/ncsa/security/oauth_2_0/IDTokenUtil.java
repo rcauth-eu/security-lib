@@ -62,7 +62,7 @@ public class IDTokenUtil {
             signature = ""; // as per spec
 
         } else {
-            DebugUtil.dbg(IDTokenUtil.class, "Signing ID token with algorithm=" + jsonWebKey.algorithm);
+            DebugUtil.dbg(IDTokenUtil.class, "Signing ID token with algorithm = " + jsonWebKey.algorithm);
             signature = sign(header, payload, jsonWebKey);
         }
         String x = concat(header, payload);
@@ -152,7 +152,7 @@ public class IDTokenUtil {
             throw new IllegalStateException("Unknown algorithm");
         }
         String algorithm = (String) alg;
-        DebugUtil.dbg(IDTokenUtil.class, "Verifying ID token with algorithm =" + algorithm);
+        DebugUtil.dbg(IDTokenUtil.class, "Verifying ID token with algorithm = " + algorithm);
         Signature signature = null;
         if (algorithm.equals(NONE_JWT)) {
             return true;
@@ -166,7 +166,7 @@ public class IDTokenUtil {
         signature.initVerify(pubKey);
         signature.update(concat(header, payload).getBytes());
         boolean rc = signature.verify(Base64.decodeBase64(sig));
-        DebugUtil.dbg(IDTokenUtil.class, "Verification ok?" + rc);
+        DebugUtil.dbg(IDTokenUtil.class, "Verification ok? " + rc);
         return rc;
     }
 
@@ -186,37 +186,55 @@ public class IDTokenUtil {
     }
 
 
+    /**
+     * This reads and optionally verifies the ID token, using the provides JSON
+     * webKeys. In case the webKeys is null, no verification is tried.
+     * @param idToken
+     * @param webKeys
+     * @return payload (claims)
+     */
     public static JSONObject verifyAndReadIDToken(String idToken, JSONWebKeys webKeys) {
         String[] x = decat(idToken);
         JSONObject h = JSONObject.fromObject(new String(Base64.decodeBase64(x[0])));
         JSONObject p = JSONObject.fromObject(new String(Base64.decodeBase64(x[1])));
-        DebugUtil.dbg(IDTokenUtil.class, "header=" + h);
-        DebugUtil.dbg(IDTokenUtil.class, "payload=" + p);
+        DebugUtil.dbg(IDTokenUtil.class, "header = " + h);
+        DebugUtil.dbg(IDTokenUtil.class, "payload = " + p);
         if (h.get(ALGORITHM) == null) {
             throw new IllegalArgumentException("Error: no algorithm.");
-        } else {
-            if (h.get(ALGORITHM).equals(NONE_JWT)) {
-                DebugUtil.dbg(IDTokenUtil.class, "unsigned id token. Returning payload");
-
-                return p;
-            }
         }
-        if (!h.get(TYPE).equals("JWT")) throw new GeneralException("Unsupported token type.");
+
+	if (h.get(ALGORITHM).equals(NONE_JWT)) {
+	    DebugUtil.dbg(IDTokenUtil.class, "Unsigned id token. Returning payload");
+
+	    return p;
+	}
+
+        if (!h.get(TYPE).equals("JWT")) {
+	    throw new GeneralException("Unsupported token type.");
+	}
         Object keyID = h.get(KEY_ID);
-        DebugUtil.dbg(IDTokenUtil.class, "key_id=" + keyID);
+        DebugUtil.dbg(IDTokenUtil.class, "key_id = " + keyID);
 
         if (keyID == null || !(keyID instanceof String)) {
             throw new IllegalArgumentException("Error: Unknown algorithm");
         }
-        boolean isOK = false;
-        try {
-            isOK = verify(h, p, x[2], webKeys.get(h.getString(KEY_ID)));
-        } catch (Throwable t) {
-            throw new IllegalStateException("Error: could not verify signature", t);
-        }
-        if (!isOK) {
-            throw new IllegalStateException("Error: could not verify signature");
-        }
+
+	if (webKeys == null)  {
+            DebugUtil.dbg(IDTokenUtil.class, "No webKeys available, skipping verification");
+
+	    return p;
+	}
+
+	boolean isOK = false;
+	try {
+	    isOK = verify(h, p, x[2], webKeys.get(h.getString(KEY_ID)));
+	} catch (Throwable t) {
+	    throw new IllegalStateException("Error: could not verify signature", t);
+	}
+	if (!isOK) {
+	    throw new IllegalStateException("Error: could not verify signature");
+	}
+
         return p;
     }
 
