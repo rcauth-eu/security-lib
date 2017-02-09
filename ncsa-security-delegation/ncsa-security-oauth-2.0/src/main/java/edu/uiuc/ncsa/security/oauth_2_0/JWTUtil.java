@@ -2,6 +2,7 @@ package edu.uiuc.ncsa.security.oauth_2_0;
 
 import edu.uiuc.ncsa.security.core.exceptions.GeneralException;
 import edu.uiuc.ncsa.security.core.util.DebugUtil;
+import edu.uiuc.ncsa.security.core.util.MyLoggingFacade;
 import edu.uiuc.ncsa.security.servlet.ServiceClient;
 import edu.uiuc.ncsa.security.util.jwk.JSONWebKey;
 import edu.uiuc.ncsa.security.util.jwk.JSONWebKeyUtil;
@@ -65,7 +66,7 @@ public class JWTUtil {
             signature = ""; // as per spec
 
         } else {
-            DebugUtil.dbg(JWTUtil.class, "Signing ID token with algorithm=" + jsonWebKey.algorithm);
+            DebugUtil.dbg(JWTUtil.class, "Signing ID token with algorithm = " + jsonWebKey.algorithm);
             signature = sign(header, payload, jsonWebKey);
         }
         String x = concat(header, payload);
@@ -152,7 +153,7 @@ public class JWTUtil {
         if (algorithm.equals(RS512_JWT)) {
             return RS512_JAVA;
         }
-        throw new IllegalArgumentException("Error: unknow algorithm \"" + algorithm + "\"");
+        throw new IllegalArgumentException("Error: unknown algorithm \"" + algorithm + "\"");
 
     }
 
@@ -163,7 +164,7 @@ public class JWTUtil {
             throw new IllegalStateException("Unknown algorithm");
         }
         String algorithm = (String) alg;
-        DebugUtil.dbg(JWTUtil.class, "Verifying ID token with algorithm =" + algorithm);
+        DebugUtil.dbg(JWTUtil.class, "Verifying ID token with algorithm = " + algorithm);
         Signature signature = null;
         if (algorithm.equals(NONE_JWT)) {
             return true;
@@ -177,7 +178,7 @@ public class JWTUtil {
         signature.initVerify(pubKey);
         signature.update(concat(header, payload).getBytes());
         boolean rc = signature.verify(Base64.decodeBase64(sig));
-        DebugUtil.dbg(JWTUtil.class, "Verification ok?" + rc);
+        DebugUtil.dbg(JWTUtil.class, "Verification ok? " + rc);
         return rc;
     }
 
@@ -204,6 +205,13 @@ public class JWTUtil {
    public static final int PAYLOAD_INDEX = 1;
    public static final int SIGNATURE_INDEX = 2;
 
+    /**
+     * This reads and optionally verifies the ID token, using the provides JSON
+     * webKeys. In case the webKeys is null, no verification is tried.
+     * @param jwt
+     * @param webKeys
+     * @return payload (claims)
+     */
     public static JSONObject verifyAndReadJWT(String jwt, JSONWebKeys webKeys) {
         if(jwt == null || jwt.isEmpty()){
             throw new GeneralException("Error: missing or empty token");
@@ -211,33 +219,45 @@ public class JWTUtil {
         String[] x = decat(jwt);
         JSONObject h = JSONObject.fromObject(new String(Base64.decodeBase64(x[HEADER_INDEX])));
         JSONObject p = JSONObject.fromObject(new String(Base64.decodeBase64(x[PAYLOAD_INDEX])));
-        DebugUtil.dbg(JWTUtil.class, "header=" + h);
-        DebugUtil.dbg(JWTUtil.class, "payload=" + p);
+        DebugUtil.dbg(JWTUtil.class, "header = " + h);
+        DebugUtil.dbg(JWTUtil.class, "payload = " + p);
         if (h.get(ALGORITHM) == null) {
             throw new IllegalArgumentException("Error: no algorithm.");
-        } else {
-            if (h.get(ALGORITHM).equals(NONE_JWT)) {
-                DebugUtil.dbg(JWTUtil.class, "unsigned id token. Returning payload");
-
-                return p;
-            }
         }
-        if (!h.get(TYPE).equals("JWT")) throw new GeneralException("Unsupported token type.");
+
+        if (h.get(ALGORITHM).equals(NONE_JWT)) {
+            MyLoggingFacade logger = new MyLoggingFacade(JWTUtil.class.getSimpleName());
+            logger.info("Note: returning payload of *unsigned* id token.");
+
+            return p;
+        }
+
+        if (!h.get(TYPE).equals("JWT")) {
+            throw new GeneralException("Unsupported token type.");
+        }
         Object keyID = h.get(KEY_ID);
-        DebugUtil.dbg(JWTUtil.class, "key_id=" + keyID);
+        DebugUtil.dbg(JWTUtil.class, "key_id = " + keyID);
 
         if (keyID == null || !(keyID instanceof String)) {
             throw new IllegalArgumentException("Error: Unknown algorithm");
         }
+
+        if (webKeys == null)  {
+            DebugUtil.dbg(JWTUtil.class, "No webKeys available, skipping verification");
+
+            return p;
+        }
+
         boolean isOK = false;
         try {
-            isOK = verify(h, p, x[SIGNATURE_INDEX], webKeys.get(h.getString(KEY_ID)));
+            isOK = verify(h, p, x[2], webKeys.get(h.getString(KEY_ID)));
         } catch (Throwable t) {
             throw new IllegalStateException("Error: could not verify signature", t);
         }
         if (!isOK) {
             throw new IllegalStateException("Error: could not verify signature");
         }
+
         return p;
     }
 
@@ -279,26 +299,30 @@ public class JWTUtil {
         if(serviceClient == null){
             throw new GeneralException("Error: Missing service client.");
         }
+        JSONWebKeys keys = null;
         if(wellKnown == null || wellKnown.isEmpty()){
             throw new GeneralException("Error: missing well known URI. Cannot get keys");
-        }
+        } else {
+            // Fix for OAUTH-164, id_token support follows.
+            String rawResponse = null;
+            try {
+                rawResponse = serviceClient.getRawResponse(wellKnown);
+            } catch (Throwable e)  {
+                throw new GeneralException("Error: failed to get "+wellKnown, e);
+            }
+            JSON rawJSON = JSONSerializer.toJSON(rawResponse);
 
-        // Fix for OAUTH-164, id_token support follows.
-        String rawResponse = serviceClient.getRawResponse(wellKnown);
-        JSON rawJSON = JSONSerializer.toJSON(rawResponse);
-
-        if (!(rawJSON instanceof JSONObject)) {
-            throw new IllegalStateException("Error: Attempted to get JSON Object but returned result is not JSON");
-        }
-        JSONObject json = (JSONObject) rawJSON;
-        String rawKeys = serviceClient.getRawResponse(json.getString("jwks_uri"));
-        JSONWebKeys keys = null;
-        JSONObject claims = null;
-        try {
-            keys = JSONWebKeyUtil.fromJSON(rawKeys);
-        } catch (Throwable e) {
-            throw new GeneralException("Error getting keys", e);
-        }
+            if (!(rawJSON instanceof JSONObject)) {
+               throw new IllegalStateException("Error: Attempted to get JSON Object but returned result is not JSON");
+            }
+            JSONObject json = (JSONObject) rawJSON;
+            String rawKeys = serviceClient.getRawResponse(json.getString("jwks_uri"));
+            try {
+               keys = JSONWebKeyUtil.fromJSON(rawKeys);
+            } catch (Throwable e) {
+               throw new GeneralException("Error getting keys", e);
+            }
+       }
         return keys;
     }
     /** Strictly for testing.
