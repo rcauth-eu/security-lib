@@ -2,7 +2,7 @@ package edu.uiuc.ncsa.security.oauth_2_0.client;
 
 import edu.uiuc.ncsa.security.core.exceptions.GeneralException;
 import edu.uiuc.ncsa.security.core.exceptions.NFWException;
-import edu.uiuc.ncsa.security.core.util.DebugUtil;
+import edu.uiuc.ncsa.security.core.util.MyLoggingFacade;
 import edu.uiuc.ncsa.security.delegation.client.request.BasicRequest;
 import edu.uiuc.ncsa.security.oauth_2_0.JWTUtil;
 import edu.uiuc.ncsa.security.servlet.ServiceClient;
@@ -63,7 +63,6 @@ public abstract class TokenAwareServer extends ASImpl {
         }catch(Throwable t){
             // it is at this point we may not have a JSON object because the request failed and the server returned an
             // error string. Throw an exception, print the response.
-            DebugUtil.dbg(this,"Response from server was not a JSON Object: " + response);
             throw new GeneralException("Error: The server encountered an error and the response was not JSON:\n\"" + response +"\"", t);
         }
         if (!jsonObject.getString(TOKEN_TYPE).equals(BEARER_TOKEN_TYPE)) {
@@ -76,7 +75,14 @@ public abstract class TokenAwareServer extends ASImpl {
         if(!oidcEnabled){
             return new JSONObject();
         }
-        JSONWebKeys keys = getJsonWebKeys();
+        JSONWebKeys keys = null;
+        if(wellKnown == null || wellKnown.isEmpty()){
+            // Note that this will be logged at startup time as a warning
+            MyLoggingFacade logger = new MyLoggingFacade(getClass().getSimpleName());
+            logger.info("No wellknown endpoint configured, cannot verify ID token");
+        } else {
+            keys = getJsonWebKeys();
+        }
 
         JSONObject claims;
         if (!jsonObject.containsKey(ID_TOKEN)) {
@@ -93,16 +99,22 @@ public abstract class TokenAwareServer extends ASImpl {
             throw new GeneralException("Error: Audience is incorrect. Expected \"" + claims.getString(AUDIENCE) + "\", got \"" + atRequest.getClient().getIdentifierString() + "\"");
         }
 
+        URL host, remoteHost;
         try {
-            URL host = getAddress().toURL();
-            URL remoteHost = new URL(claims.getString(ISSUER));
-            if (!host.getProtocol().equals(remoteHost.getProtocol()) ||
-                    !host.getHost().equals(remoteHost.getHost()) ||
-                    host.getPort() != remoteHost.getPort()) {
-                throw new GeneralException("Error: Issuer is incorrect. Got \"" + remoteHost + "\", expected \"" + host + "\"");
-            }
+            host = getAddress().toURL();
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            throw new GeneralException("Error: address is not a valid URL: \""+getAddress()+"\": "+e.getMessage());
+        }
+        try {
+            remoteHost = new URL(claims.getString(ISSUER));
+        } catch (MalformedURLException e)   {
+            throw new GeneralException("Error: Issuer is not a valid URL: \""+claims.getString(ISSUER)+"\": "+e.getMessage());
+        }
+        if (!host.getProtocol().equals(remoteHost.getProtocol()) ||
+            !host.getHost().equals(remoteHost.getHost()) ||
+            host.getPort() != remoteHost.getPort())
+        {
+            throw new GeneralException("Error: Issuer is incorrect. Got \"" + remoteHost + "\", expected \"" + host + "\"");
         }
 
         if (!claims.containsKey(EXPIRATION)) {
