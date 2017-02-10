@@ -114,30 +114,41 @@ public class ATServer2 extends ASImpl implements ATServer {
             throw new GeneralException("Error: incorrect token type");
         }
         // Fix for OAUTH-164, id_token support follows.
+	MyLoggingFacade logger = new MyLoggingFacade(getClass().getSimpleName());
 	JSONWebKeys keys = null;
 	JSONObject claims = null;
-	// Do not force adding a .well-known URI to the config, in order to
-	// allow new client software to work with old server software.
-        if(wellKnown == null){
-            //throw new NFWException("Error: no well-known URI has been configured. Please add this to the configuration file.");
-	    MyLoggingFacade logger = new MyLoggingFacade(getClass().getSimpleName());
-	    logger.warn("NOT verifying token: no well-known URI has been configured. Please add a wellKnownUri node to the configuration file.");
-        } else {
-	    String rawResponse = getServiceClient().getRawResponse(wellKnown);
-	    JSON rawJSON = JSONSerializer.toJSON(rawResponse);
+	String idToken = jsonObject.getString(ID_TOKEN);
 
-	    if (!(rawJSON instanceof JSONObject)) {
-		throw new IllegalStateException("Error: Attempted to get JSON Object but returned result is not JSON");
+	if (IDTokenUtil.isSigned(idToken))  {
+	    // Do not force adding a .well-known URI to the config, if absent,
+	    // warn but don't fail.
+	    if(wellKnown == null){
+		//throw new NFWException("Error: no well-known URI has been configured. Please add this to the configuration file.");
+		logger.warn("NOT verifying token: no well-known URI has been configured. Please add a wellKnownUri node to the configuration file.");
+	    } else {
+		logger.debug("Obtaining OIDC info from .well-known URI "+wellKnown);
+		String rawResponse = getServiceClient().getRawResponse(wellKnown);
+		JSON rawJSON = JSONSerializer.toJSON(rawResponse);
+
+		if (!(rawJSON instanceof JSONObject)) {
+		    throw new IllegalStateException("Error: Attempted to get JSON Object but returned result is not JSON");
+		}
+		JSONObject json = (JSONObject) rawJSON;
+		String jwksUri = json.getString("jwks_uri");
+		logger.debug("Obtaining keys info from URI "+jwksUri);
+		String rawKeys = getServiceClient().getRawResponse(jwksUri);
+		try {
+		    keys = JSONWebKeyUtil.fromJSON(rawKeys);
+		} catch (Throwable e) {
+		    throw new GeneralException("Error getting keys", e);
+		}
 	    }
-	    JSONObject json = (JSONObject) rawJSON;
-	    String rawKeys = getServiceClient().getRawResponse(json.getString("jwks_uri"));
-	    try {
-		keys = JSONWebKeyUtil.fromJSON(rawKeys);
-	    } catch (Throwable e) {
-		throw new GeneralException("Error getting keys", e);
-	    }
+	    logger.debug("Getting and verifying claims from ID token");
+	    claims = IDTokenUtil.verifyAndReadIDToken(idToken, keys);
+	} else {
+	    logger.info("Getting claims from unsigned ID Token");
+	    claims = IDTokenUtil.readIDToken(idToken);
 	}
-	claims = IDTokenUtil.verifyAndReadIDToken(jsonObject.getString(ID_TOKEN), keys);
 
         // Now we have to check claims.
         if (!claims.getString(AUDIENCE).equals(atRequest.getClient().getIdentifierString())) {
@@ -155,6 +166,7 @@ public class ATServer2 extends ASImpl implements ATServer {
                 throw new GeneralException("Error: Issuer is incorrect. Got \"" + remoteHost + "\"");
             }
         } catch (MalformedURLException e) {
+	    logger.warn("Cannot verify issuer, iss claim is invalid");
             e.printStackTrace();
         }
 

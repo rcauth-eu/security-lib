@@ -185,6 +185,40 @@ public class IDTokenUtil {
         return new String[]{header, payload, signature};
     }
 
+    /**
+     * determines whether a token is signed
+     * @param idToken
+     * @return whether token is signed (true) or not (false)
+     */
+    public static boolean isSigned(String idToken) {
+	String[] x = decat(idToken);
+	JSONObject h = JSONObject.fromObject(new String(Base64.decodeBase64(x[0])));
+        if (!h.get(TYPE).equals("JWT")) {
+	    throw new GeneralException("Unsupported token type: "+h.get(TYPE)+ " != JWT");
+	}
+        if (h.get(ALGORITHM) == null) {
+            throw new IllegalArgumentException("Error: no algorithm.");
+        }
+
+	if (h.get(ALGORITHM).equals(NONE_JWT))	{
+	    return false;
+	}
+
+	return true;
+    }
+
+    /**
+     * This reads the payload of the ID token. No verification is tried.
+     * @param idToken
+     * @return payload (claims)
+     */
+    public static JSONObject readIDToken(String idToken) {
+        String[] x = decat(idToken);
+        JSONObject p = JSONObject.fromObject(new String(Base64.decodeBase64(x[1])));
+        DebugUtil.dbg(IDTokenUtil.class, "payload = " + p);
+	
+	return p;
+    }
 
     /**
      * This reads and optionally verifies the ID token, using the provides JSON
@@ -199,6 +233,9 @@ public class IDTokenUtil {
         JSONObject p = JSONObject.fromObject(new String(Base64.decodeBase64(x[1])));
         DebugUtil.dbg(IDTokenUtil.class, "header = " + h);
         DebugUtil.dbg(IDTokenUtil.class, "payload = " + p);
+        if (!h.get(TYPE).equals("JWT")) {
+	    throw new GeneralException("Unsupported token type: "+h.get(TYPE)+ " != JWT");
+	}
         if (h.get(ALGORITHM) == null) {
             throw new IllegalArgumentException("Error: no algorithm.");
         }
@@ -209,9 +246,6 @@ public class IDTokenUtil {
 	    return p;
 	}
 
-        if (!h.get(TYPE).equals("JWT")) {
-	    throw new GeneralException("Unsupported token type.");
-	}
         Object keyID = h.get(KEY_ID);
         DebugUtil.dbg(IDTokenUtil.class, "key_id = " + keyID);
 
