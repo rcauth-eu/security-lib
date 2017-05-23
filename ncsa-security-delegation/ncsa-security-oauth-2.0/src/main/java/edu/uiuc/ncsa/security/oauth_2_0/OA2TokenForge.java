@@ -122,8 +122,10 @@ public class OA2TokenForge implements TokenForge {
             return getAccessToken(OA2Utilities.getParameters(request));
 	} catch (MissingTokenException e)   {
 	    throw new OA2GeneralError(OA2Errors.INVALID_REQUEST, e.getMessage(), HttpStatus.SC_BAD_REQUEST);
+	} catch (OA2RedirectableError e)    {
+	    throw e;
         } catch (Exception e) {
-            throw new GeneralException("Could not create a token", e);
+	    throw new GeneralException("Could not create a token: "+e.getMessage(), e);
         }
     }
 
