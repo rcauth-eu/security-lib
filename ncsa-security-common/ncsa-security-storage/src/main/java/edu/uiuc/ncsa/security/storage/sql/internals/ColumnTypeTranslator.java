@@ -10,7 +10,11 @@ import java.sql.Types;
  */
 public abstract class ColumnTypeTranslator {
     public String toSQL(ColumnDescriptorEntry cde) {
-        return toSQL(cde.getType());
+	try {
+	    return toSQL(cde.getType());
+	} catch (IllegalArgumentException e)	{
+	    throw new IllegalArgumentException("Error: unsupported type "+cde.getType()+" for "+cde.getName());
+	}
     }
 
     public String toSQL(int sqlType) {
@@ -28,7 +32,7 @@ public abstract class ColumnTypeTranslator {
             case Types.TIMESTAMP:
                 return "timestamp";
             default:
-                throw new IllegalArgumentException("Error: This type is unsupported");
+                throw new IllegalArgumentException("Error: This type is unsupported: "+sqlType);
         }
     }
 }

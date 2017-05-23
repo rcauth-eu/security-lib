@@ -143,7 +143,14 @@ public abstract class SQLStore<V extends Identifiable> extends SQLDatabase imple
 
     public void register(V value) {
         Connection c = getConnection();
-        try {
+
+	try {
+	    String table = getTable().getTablename();
+	    ResultSet res = c.getMetaData().getTables(null, null, table, new String[] {"TABLE"});
+	    if (res.next() == false)    {
+		throw new GeneralException("Cannot find table "+table);
+	    }
+
             PreparedStatement stmt = c.prepareStatement(getTable().createInsertStatement());
             Map<String, Object> map = depopulate(value);
             int i = 1;
@@ -162,7 +169,7 @@ public abstract class SQLStore<V extends Identifiable> extends SQLDatabase imple
             stmt.close();
         } catch (SQLException e) {
             destroyConnection(c);
-            throw new GeneralException("Error: could not register object with id \"" + value.getIdentifierString() + "\"", e);
+            throw new GeneralException("Error: could not register object with id \"" + value.getIdentifierString() + "\" ("+e.getMessage()+")", e);
         } finally {
             releaseConnection(c);
         }
