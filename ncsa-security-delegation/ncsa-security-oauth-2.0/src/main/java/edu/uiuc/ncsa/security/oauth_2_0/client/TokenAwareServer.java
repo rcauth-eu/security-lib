@@ -40,9 +40,9 @@ public abstract class TokenAwareServer extends ASImpl {
 
     public JSONWebKeys getJsonWebKeys() {
         // Fix for OAUTH-164, id_token support follows.
-        if (wellKnown == null) {
-            throw new NFWException("Error: no well-known URI has been configured. Please add this to the configuration file.");
-        }
+//        if (wellKnown == null) {
+//            throw new NFWException("Error: no well-known URI has been configured. Please add this to the configuration file.");
+//        }
 
         return JWTUtil.getJsonWebKeys(getServiceClient(), wellKnown);
 /*

@@ -226,7 +226,9 @@ public class JWTUtil {
         }
 
 	if (h.get(ALGORITHM).equals(NONE_JWT)) {
-	    DebugUtil.dbg(JWTUtil.class, "Unsigned id token. Returning payload");
+            MyLoggingFacade logger = new MyLoggingFacade(JWTUtil.class.getSimpleName());
+            logger.info("Unsigned id token. Returning payload");
+//	    DebugUtil.dbg(JWTUtil.class, "Unsigned id token. Returning payload");
 
 	    return p;
 	}
@@ -303,7 +305,7 @@ public class JWTUtil {
         // allow new client software to work with old server software.
         if(wellKnown == null || wellKnown.isEmpty()){
 //            throw new GeneralException("Error: missing well known URI. Cannot get keys");
-            MyLoggingFacade logger = new MyLoggingFacade(getClass().getSimpleName());
+            MyLoggingFacade logger = new MyLoggingFacade(JWTUtil.class.getSimpleName());
             logger.warn("NOT verifying token: no well-known URI has been configured. Please add a wellKnownUri node to the configuration file.");
         } else {
             // Fix for OAUTH-164, id_token support follows.
