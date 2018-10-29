@@ -122,6 +122,14 @@
                         <configuration>
                             <!-- Java 8 specific or empty javadoc tags make the build fail -->
                             <additionalparam>-Xdoclint:none</additionalparam>
+			    <additionalJOptions>
+			       <additionalJOption>--add-exports</additionalJOption>
+			       <additionalJOption>java.base/sun.security.pkcs10=ALL-UNNAMED</additionalJOption>
+			       <additionalJOption>--add-exports</additionalJOption>
+			       <additionalJOption>java.base/sun.security.x509=ALL-UNNAMED</additionalJOption>
+			       <additionalJOption>--add-exports</additionalJOption>
+			       <additionalJOption>java.base/sun.security.util=ALL-UNNAMED</additionalJOption>
+			    </additionalJOptions>
                         </configuration>
 
                     </execution>
