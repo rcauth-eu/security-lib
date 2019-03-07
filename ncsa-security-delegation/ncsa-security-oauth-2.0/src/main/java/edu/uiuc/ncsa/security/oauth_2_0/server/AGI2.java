@@ -40,7 +40,7 @@ public class AGI2 extends AbstractIssuer implements AGIssuer {
         // Get values out of AGRequest and populate variables
         Map<String, String> reqParamMap = OA2Utilities.getParameters(authorizationGrantRequest.getServletRequest());
 
-        // TODO Check parameters passed in
+        //TODO Check parameters passed in
 
         AuthorizationGrant ag = tokenForge.getAuthorizationGrant(); // get a fresh new shiny one.
         AGIResponse2 agResponse = new AGIResponse2(isOIDC);
