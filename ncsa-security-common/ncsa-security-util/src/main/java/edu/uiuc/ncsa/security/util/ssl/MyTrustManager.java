@@ -200,12 +200,12 @@ public class MyTrustManager implements X509TrustManager {
         String certDirPath = getTrustRootPath();
 
         if (certDirPath == null) {
-              dbg("cert dir path null. Aborting");
+              dbg("Not using certDirPath (=unset)");
               return null;
           }
           File dir = new File(certDirPath);
           if (dir.isDirectory()) {
-              dbg(" cert dir path is not a directory. Getting from file.");
+              dbg("Using certDirPath directory: "+certDirPath);
               return getIssuersFromDirectory(dir);
           }
         return getIssuersFromFile(dir);
