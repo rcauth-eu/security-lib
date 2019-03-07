@@ -9,7 +9,7 @@
     </parent>
     <groupId>edu.uiuc.ncsa.security</groupId>
     <artifactId>ncsa-security-all</artifactId>
-    <version>4.1.1</version>
+    <version>${revision}</version>
     <name>Parent module for everything of interest.</name>
     <packaging>pom</packaging>
     <description>Generic security code for delegation.</description>
@@ -36,6 +36,7 @@
         </developer>
     </developers>
     <properties>
+        <revision>4.1.1-RCauth</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <additionalparam>-Xdoclint:none</additionalparam>
     </properties>
@@ -53,6 +54,20 @@
     </dependencies>
     <build>
         <plugins>
+            <!-- make sure jar file's MANIFEST.MF will contain the version -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>                   
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -109,6 +124,35 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- update revision properties -->
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>flatten-maven-plugin</artifactId>
+              <version>1.1.0</version>
+              <configuration>
+                <!-- also keep name -->
+                <pomElements><name/></pomElements>
+                <updatePomFile>true</updatePomFile>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>flatten</id>
+                  <phase>process-resources</phase>
+                  <goals>
+                    <goal>flatten</goal>
+                  </goals>
+                </execution>
+                <execution>
+                  <id>flatten.clean</id>
+                  <phase>clean</phase>
+                  <goals>
+                    <goal>clean</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
