@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.StringTokenizer;
 
 /**
@@ -117,6 +119,10 @@ public abstract class AbstractServlet extends HttpServlet implements Logable {
      */
     protected void handleException(Throwable t, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         error("INTERNAL ERROR: " + (t.getMessage() == null ? "(no message)" : t.getMessage())); // log it appropriately
+        // Also log the stacktrace as error
+        StringWriter errors = new StringWriter();
+        t.printStackTrace(new PrintWriter(errors));
+        error(errors.toString());
         // ok, if it is a strange error, print a stack if you need to.
         getExceptionHandler().handleException(t, request, response);
 
