@@ -24,6 +24,8 @@ public class OA2GeneralError extends GeneralException {
     }
 
     public OA2GeneralError(String error,String description,  int httpStatus) {
+        // Make sure to set a reasonable message
+        super("error: "+error+" (status: "+httpStatus+", description: "+description+")");
         this.description = description;
         this.error = error;
         this.httpStatus = httpStatus;
