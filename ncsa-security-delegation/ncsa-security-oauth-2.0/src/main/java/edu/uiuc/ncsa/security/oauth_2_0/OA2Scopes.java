@@ -14,8 +14,8 @@ public interface OA2Scopes {
     public static final String SCOPE_OPENID = "openid";
     public static final String SCOPE_PHONE = "phone";
     public static final String SCOPE_PROFILE = "profile";
-    public static String SCOPE_CILOGON_INFO = "org.cilogon.userinfo";
-    public static String EDU_PERSON_ORC_ID = "eduPersonOrcid";
+    public static final String SCOPE_CILOGON_INFO = "org.cilogon.userinfo";
+    public static final String EDU_PERSON_ORC_ID = "eduPersonOrcid";
 
 
     /**
