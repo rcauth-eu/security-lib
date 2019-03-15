@@ -12,16 +12,16 @@ import org.apache.http.HttpStatus;
 public class OA2ATException extends GeneralException {
 
     public OA2ATException(String error, String description, int statusCode) {
+        super(description);
         this.description = description;
         this.error = error;
         this.statusCode = statusCode;
     }
 
     public OA2ATException(String error, String description) {
-           this.description = description;
-           this.error = error;
-           this.statusCode = HttpStatus.SC_BAD_REQUEST; //default
-       }
+        // default statusCode is BAD_REQUEST
+        this(error, description, HttpStatus.SC_BAD_REQUEST);
+    }
 
     String error;
     String description;
