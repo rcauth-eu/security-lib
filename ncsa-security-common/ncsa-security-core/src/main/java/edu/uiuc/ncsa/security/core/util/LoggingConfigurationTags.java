@@ -28,7 +28,7 @@ public interface LoggingConfigurationTags extends ConfigurationTags {
     /**
      * Maximum size of a log file
      */
-    public static final String LOG_FILE_SIZE = "logFileSize";
+    public static final String LOG_FILE_SIZE = "logSize"; // Note: was logFileSize, but doc in OA4MP says logSize
     /**
      * Enable debugging.
      */

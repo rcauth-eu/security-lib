@@ -17,13 +17,13 @@ import static edu.uiuc.ncsa.security.core.configuration.Configurations.getFirstA
  * on 4/11/12 at  5:39 PM
  */
 public class LoggerProvider implements Provider<MyLoggingFacade>, LoggingConfigurationTags {
-    String logFile;
-    boolean debugOn;
-    String loggerName;
-    int fileCount = -1;
-    int maxFileSize = -1;
-    boolean appendOn = true;
-    boolean disableLog4j = true;
+    String logFile = null;
+    boolean debugOn = false; // default: debug is off
+    String loggerName = null;
+    int fileCount = -1; // default is set in setup(): 1
+    int maxFileSize = -1; // default is set in setup(): 1MB
+    boolean appendOn = true; // default: append. TODO appendOn is actually not used
+    boolean disableLog4j = true; // default: don't use Log4J
 
 
     public LoggerProvider(String logFile,
@@ -52,33 +52,30 @@ public class LoggerProvider implements Provider<MyLoggingFacade>, LoggingConfigu
         if (configurationNode == null) return;
         logFile = getFirstAttribute(configurationNode, LOG_FILE_NAME);
         loggerName = getFirstAttribute(configurationNode, LOGGER_NAME);
-        try {
-            debugOn = Boolean.parseBoolean(getFirstAttribute(configurationNode, DEBUG_ENABLED));
-        } catch (Exception x) {
-            // do nothing
-            debugOn = false;
-        }
+        String value = null;
+
+        value = getFirstAttribute(configurationNode, DEBUG_ENABLED);
+        if (value != null) // default is set above: false
+            debugOn = Boolean.parseBoolean(value);
+
         try {
             fileCount = Integer.parseInt(getFirstAttribute(configurationNode, LOG_FILE_COUNT));
         } catch (Exception x) {
-            fileCount = 1;
+            fileCount = 1; // default: 1
         }
         try {
             maxFileSize = Integer.parseInt(getFirstAttribute(configurationNode, LOG_FILE_SIZE));
         } catch (Exception e) {
-            maxFileSize = 1000000;
-        }
-        try {
-            appendOn = Boolean.parseBoolean(getFirstAttribute(configurationNode, APPEND_ENABLED));
-        } catch (Exception e) {
-            appendOn = true;
-        }
-        try{
-            disableLog4j = Boolean.parseBoolean(getFirstAttribute(configurationNode, DISABLE_LOG4J));
-        }catch(Exception e){
-            disableLog4j = false;
+            maxFileSize = 1000000; // default: 1MB
         }
 
+        value = getFirstAttribute(configurationNode, APPEND_ENABLED);
+        if (value != null) // default is set above: true
+            appendOn = Boolean.parseBoolean(value);
+
+        value = getFirstAttribute(configurationNode, DISABLE_LOG4J);
+        if (value != null) // default is set above: true
+            disableLog4j = Boolean.parseBoolean(value);
     }
 
     ConfigurationNode configurationNode;
