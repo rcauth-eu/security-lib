@@ -5,7 +5,6 @@ package edu.uiuc.ncsa.security.util.ssl;
  */
 
 
-import edu.uiuc.ncsa.security.core.util.DebugUtil;
 import edu.uiuc.ncsa.security.core.util.MyLoggingFacade;
 import edu.uiuc.ncsa.security.util.pkcs.CertUtil;
 
@@ -29,7 +28,6 @@ public class MyTrustManager implements X509TrustManager {
 
     SSLConfiguration sslConfiguration = null;
 
-    boolean debugOn = DebugUtil.isEnabled(); // set to false for release
     boolean stackTracesOn = false; // set to false for use as a library, true for standalone release
 
     public MyTrustManager(MyLoggingFacade logger, String trustRootPath) {
@@ -71,10 +69,8 @@ public class MyTrustManager implements X509TrustManager {
     MyLoggingFacade logger;
 
     public MyLoggingFacade getLogger() {
-        if (logger == null) {
+        if (logger == null)
             logger = new MyLoggingFacade(MyTrustManager.class.getName());
-            logger.setDebugOn(debugOn);
-        }
         return logger;
     }
 
@@ -115,7 +111,11 @@ public class MyTrustManager implements X509TrustManager {
     }
 
     void dbg(String x) {
-      DebugUtil.dbg(this, x);
+        getLogger().debug(getClass().getSimpleName() + ": " + x);
+    }
+
+    void info(String x) {
+        getLogger().info(getClass().getSimpleName() + ": " + x);
     }
 
     String host;
@@ -144,7 +144,7 @@ public class MyTrustManager implements X509TrustManager {
                 certData[i] = new String(buffer);
                 fileStream.close();
             } catch (Exception e) {
-                dbg("Exception Reading issues " + e.getMessage());
+                info("Exception Reading issues " + e.getMessage());
                 // ignore
             }
         }
@@ -153,7 +153,7 @@ public class MyTrustManager implements X509TrustManager {
             dbg("Got " + issuers.length + " issuers.");
         } catch (Exception e) {
             if (stackTracesOn) e.printStackTrace();
-            dbg("Exception getting issuers. Returning null. " + e.getMessage());
+            info("Exception getting issuers. Returning null. " + e.getMessage());
         }
         return issuers;
     }
@@ -286,7 +286,7 @@ public class MyTrustManager implements X509TrustManager {
             String service = CN.substring(0, index);
             CN = CN.substring(index + 1);
             if (!service.equals("host") && !service.equals("myproxy")) {
-                dbg("common name =\"" + CN + "\" has unknown server element \"" + subject + "\"");
+                info("common name =\"" + CN + "\" has unknown server element \"" + subject + "\"");
 
                 throw new CertificateException(
                         "Server certificate subject CN contains unknown server element: "
@@ -313,7 +313,7 @@ public class MyTrustManager implements X509TrustManager {
             if (CN.equals(configuredCN)) {
                 return;
             }
-            dbg(".checkServerDN: Configured serverDN check failed.");
+            info(".checkServerDN: Configured serverDN check failed.");
 
 
         }
@@ -331,7 +331,7 @@ public class MyTrustManager implements X509TrustManager {
         dbg(".checkServerDN: host=CN? " + CN.equals(getHost()));
 
         if (!CN.equals(getHost())) {
-            dbg("common name =\"" + CN + "\" does not match host from reverse lookup = \"" + host + "\"");
+            info("common name =\"" + CN + "\" does not match host from reverse lookup = \"" + host + "\"");
             throw new CertificateException(
                     "Server certificate subject CN (" + CN
                             + ") does not match server hostname (" + host
