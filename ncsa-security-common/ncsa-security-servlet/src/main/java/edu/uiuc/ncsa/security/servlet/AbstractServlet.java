@@ -139,7 +139,7 @@ public abstract class AbstractServlet extends HttpServlet implements Logable {
     @Override
     public void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
         try {
-               printAllParameters(httpServletRequest);
+            printAllParameters(httpServletRequest);
             if (doPing(httpServletRequest, httpServletResponse)) return;
             /*
             So we are clear on this... Tomcat will take any POST that has the body encoded as application/x-www-form-urlencoded,
@@ -201,7 +201,7 @@ public abstract class AbstractServlet extends HttpServlet implements Logable {
     @Override
     public void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
         try {
-            //   printAllParameters(httpServletRequest);
+            printAllParameters(httpServletRequest);
             if (doPing(httpServletRequest, httpServletResponse)) return;
             doIt(httpServletRequest, httpServletResponse);
         } catch (Throwable t) {
