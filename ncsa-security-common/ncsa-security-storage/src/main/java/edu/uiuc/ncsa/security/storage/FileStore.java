@@ -223,10 +223,10 @@ public abstract class FileStore<V extends Identifiable> extends IndexedStreamSto
         if(f.length() == 0){
             if(removeEmptyFiles){
                f.delete();
-                DebugUtil.dbg(this, "Deleting empty file:" + f);
+                DebugUtil.info(this, "Deleting empty file:" + f);
                 return null;
             }else {
-                DebugUtil.dbg(this, "Skipping file of length zero:" + f);
+                DebugUtil.info(this, "Skipping file of length zero:" + f);
                 return null;
             }
         }

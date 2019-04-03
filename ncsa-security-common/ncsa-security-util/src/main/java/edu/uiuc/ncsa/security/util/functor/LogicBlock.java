@@ -180,7 +180,7 @@ public class LogicBlock implements JSONFunctor {
         if (initialized) {
             return;
         }
-        DebugUtil.dbg(this,"initialized, raw JSON = " + json);
+        DebugUtil.info(this,"initialized, raw JSON = " + json);
 
         // the assumption is that this object has three elements for if, then and else, plus possibly others.
         if (json.containsKey(IF.getValue())) {
