@@ -20,41 +20,43 @@ public class ServletDebugUtil extends DebugUtil {
               reqUrl += "?" + queryString;
           }
           printIt("\n" + klasse.getSimpleName() + " at " + (new Date()));
-          printIt("HTTP method=" + request.getMethod());
-          printIt("Request parameters for " + reqUrl + "");
+          printIt("> HTTP method=" + request.getMethod());
+          printIt("> Request parameters for " + reqUrl + "");
 
           if (request.getParameterMap() == null || request.getParameterMap().isEmpty()) {
-              printIt("  (none)");
+              printIt(">  (none)");
           } else {
               for (Object key : request.getParameterMap().keySet()) {
                   String[] values = request.getParameterValues(key.toString());
-                  printIt(" " + key + ":");
+                  printIt(">  " + key + ":");
                   if (values == null || values.length == 0) {
-                      printIt("   (no values)");
+                      printIt(">    (no values)");
                   } else {
                       for (String x : values) {
-                          printIt("   " + x);
+                          printIt(">    " + x);
                       }
                   }
               }
           }
-          printIt("Cookies:");
+          printIt("> Cookies:");
           if (request.getCookies() == null) {
-              printIt(" (none)");
+              printIt(">  (none)");
           } else {
               for (javax.servlet.http.Cookie c : request.getCookies()) {
-                  printIt(" " + c.getName() + "=" + c.getValue());
+                  printIt(">  " + c.getName() + "=" + c.getValue());
               }
           }
-          printIt("Headers:");
+          printIt("> Headers:");
           Enumeration e = request.getHeaderNames();
           if (!e.hasMoreElements()) {
-              printIt(" (none)");
+              printIt(">  (none)");
           } else {
               while (e.hasMoreElements()) {
                   String name = e.nextElement().toString();
-                  printIt(" " + name);
-                  printIt("   " + request.getHeader(name));
+                  printIt(">  " + name);
+                  String val = request.getHeader(name);
+                  if (val !=null && !val.isEmpty())
+                      printIt(">    " + val);
               }
           }
       }
