@@ -61,7 +61,7 @@ public class ParserUtil {
                 }
 
             }
-            DebugUtil.dbg(ParserUtil.class, "replacement templates=" + functorFactory.getReplacementTemplates());
+            DebugUtil.info(ParserUtil.class, "replacement templates=" + functorFactory.getReplacementTemplates());
 
         } catch (Throwable t) {
             t.printStackTrace();

@@ -66,7 +66,7 @@ public class JWTUtil {
             signature = ""; // as per spec
 
         } else {
-            DebugUtil.dbg(JWTUtil.class, "Signing ID token with algorithm = " + jsonWebKey.algorithm);
+            DebugUtil.info(JWTUtil.class, "Signing ID token with algorithm = " + jsonWebKey.algorithm);
             signature = sign(header, payload, jsonWebKey);
         }
         String x = concat(header, payload);
@@ -164,7 +164,7 @@ public class JWTUtil {
             throw new IllegalStateException("Unknown algorithm");
         }
         String algorithm = (String) alg;
-        DebugUtil.dbg(JWTUtil.class, "Verifying ID token with algorithm = " + algorithm);
+        DebugUtil.info(JWTUtil.class, "Verifying ID token with algorithm = " + algorithm);
         Signature signature = null;
         if (algorithm.equals(NONE_JWT)) {
             return true;
@@ -178,7 +178,7 @@ public class JWTUtil {
         signature.initVerify(pubKey);
         signature.update(concat(header, payload).getBytes());
         boolean rc = signature.verify(Base64.decodeBase64(sig));
-        DebugUtil.dbg(JWTUtil.class, "Verification ok? " + rc);
+        DebugUtil.info(JWTUtil.class, "Verification ok? " + rc);
         return rc;
     }
 
@@ -219,8 +219,8 @@ public class JWTUtil {
         String[] x = decat(jwt);
         JSONObject h = JSONObject.fromObject(new String(Base64.decodeBase64(x[HEADER_INDEX])));
         JSONObject p = JSONObject.fromObject(new String(Base64.decodeBase64(x[PAYLOAD_INDEX])));
-        DebugUtil.dbg(JWTUtil.class, "header = " + h);
-        DebugUtil.dbg(JWTUtil.class, "payload = " + p);
+        DebugUtil.info(JWTUtil.class, "header = " + h);
+        DebugUtil.info(JWTUtil.class, "payload = " + p);
         if (h.get(ALGORITHM) == null) {
             throw new IllegalArgumentException("Error: no algorithm.");
         }
@@ -236,14 +236,14 @@ public class JWTUtil {
             throw new GeneralException("Unsupported token type.");
         }
         Object keyID = h.get(KEY_ID);
-        DebugUtil.dbg(JWTUtil.class, "key_id = " + keyID);
+        DebugUtil.info(JWTUtil.class, "key_id = " + keyID);
 
         if (keyID == null || !(keyID instanceof String)) {
             throw new IllegalArgumentException("Error: Unknown algorithm");
         }
 
         if (webKeys == null)  {
-            DebugUtil.dbg(JWTUtil.class, "No webKeys available, skipping verification");
+            DebugUtil.info(JWTUtil.class, "No webKeys available, skipping verification");
 
             return p;
         }

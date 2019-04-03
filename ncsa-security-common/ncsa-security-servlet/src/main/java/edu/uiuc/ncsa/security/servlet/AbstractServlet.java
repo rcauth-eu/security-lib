@@ -166,10 +166,10 @@ public abstract class AbstractServlet extends HttpServlet implements Logable {
               Fixes CIL-517
              */
            String rawContentType = httpServletRequest.getContentType();
-           ServletDebugUtil.dbg(this,"in POST, raw content = "+ rawContentType);
+           debug("in POST, raw content = "+ rawContentType);
             if(rawContentType == null || rawContentType.isEmpty()){
                 httpServletResponse.setStatus(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE);
-                ServletDebugUtil.dbg(this,"in POST, raw content empty, throwing exception");
+                error("in POST, raw content empty, throwing exception");
                 throw new ServletException("Error: Missing content type for body of POST. Request rejected.");
             }
             // As per the spec, https://tools.ietf.org/html/rfc7231#section-3.1.1.1
@@ -179,18 +179,18 @@ public abstract class AbstractServlet extends HttpServlet implements Logable {
             boolean gotOne = false;
             while(tokenizer.hasMoreTokens()){
                 String foo = tokenizer.nextToken().trim();
-                ServletDebugUtil.dbg(this,"checking encoding, next = " + foo);
+                debug("checking encoding, next = " + foo);
                 gotOne = gotOne || foo.equals("application/x-www-form-urlencoded");
-                ServletDebugUtil.dbg(this,"checking encoding, gotOne = " + gotOne);
+                debug("checking encoding, gotOne = " + gotOne);
             }
 
             if (!gotOne) {
                 httpServletResponse.setStatus(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE);
-                ServletDebugUtil.dbg(this,"in POST, did NOT get one, throwing exception");
+                error("in POST, did NOT get one, throwing exception");
 
                 throw new ServletException("Error: Unsupported encoding of \"" + httpServletRequest.getContentType() + "\" for body of POST. Request rejected.");
             }
-            ServletDebugUtil.dbg(this,"encoding ok, starting doIt()");
+            info("encoding ok, starting doIt()");
 
             doIt(httpServletRequest, httpServletResponse);
         } catch (Throwable t) {
