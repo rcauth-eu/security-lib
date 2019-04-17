@@ -193,6 +193,7 @@ public abstract class AbstractServlet extends HttpServlet implements Logable {
 
             doIt(httpServletRequest, httpServletResponse);
         } catch (Throwable t) {
+            // Print stacktrace to stdout (i.e. syslog)
             t.printStackTrace();
             handleException(t, httpServletRequest, httpServletResponse);
         }
@@ -205,6 +206,8 @@ public abstract class AbstractServlet extends HttpServlet implements Logable {
             if (doPing(httpServletRequest, httpServletResponse)) return;
             doIt(httpServletRequest, httpServletResponse);
         } catch (Throwable t) {
+            // Print stacktrace to stdout (i.e. syslog)
+            t.printStackTrace();
             handleException(t, httpServletRequest, httpServletResponse);
         }
     }
