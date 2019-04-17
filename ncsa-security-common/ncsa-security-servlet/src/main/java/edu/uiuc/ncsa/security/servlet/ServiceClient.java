@@ -166,7 +166,7 @@ public class ServiceClient {
 
                response = client.execute(httpRequestBase);
            }catch(Throwable t){
-               ServletDebugUtil.error(this, "Error  invoking execute for client", t);
+               ServletDebugUtil.error(this, "Error invoking execute() for client", t);
                if(ServletDebugUtil.isEnabled()){
                    t.printStackTrace();
                }
@@ -175,7 +175,7 @@ public class ServiceClient {
            try {
 
                if(response.getEntity() != null && response.getEntity().getContentType()!=null) {
-                   ServletDebugUtil.info(this, "Raw response, content type:" + response.getEntity().getContentType());
+                   ServletDebugUtil.info(this, "Raw response, content type: \"" + response.getEntity().getContentType() + "\"");
                }else{
                    ServletDebugUtil.info(this, "No response entity or no content type.");
 
