@@ -166,10 +166,10 @@ public abstract class AbstractServlet extends HttpServlet implements Logable {
               Fixes CIL-517
              */
            String rawContentType = httpServletRequest.getContentType();
-           debug("in POST, raw content = "+ rawContentType);
+           debug("doPost(): raw content-type = "+ rawContentType);
             if(rawContentType == null || rawContentType.isEmpty()){
                 httpServletResponse.setStatus(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE);
-                error("in POST, raw content empty, throwing exception");
+                warn("doPost(): raw content empty, throwing exception");
                 throw new ServletException("Error: Missing content type for body of POST. Request rejected.");
             }
             // As per the spec, https://tools.ietf.org/html/rfc7231#section-3.1.1.1
@@ -179,16 +179,15 @@ public abstract class AbstractServlet extends HttpServlet implements Logable {
             boolean gotOne = false;
             while(tokenizer.hasMoreTokens()){
                 String foo = tokenizer.nextToken().trim();
-                debug("checking encoding, next = " + foo);
+                debug("checking supported encoding, next = " + foo);
                 gotOne = gotOne || foo.equals("application/x-www-form-urlencoded");
                 debug("checking encoding, gotOne = " + gotOne);
             }
 
             if (!gotOne) {
                 httpServletResponse.setStatus(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE);
-                error("in POST, did NOT get one, throwing exception");
-
-                throw new ServletException("Error: Unsupported encoding of \"" + httpServletRequest.getContentType() + "\" for body of POST. Request rejected.");
+                warn("doPost(): content-type \"" + rawContentType + "\" NOT supported, throwing exception");
+                throw new ServletException("Error: Unsupported encoding of \"" + rawContentType + "\" for body of POST. Request rejected.");
             }
             info("encoding ok, starting doIt()");
 
