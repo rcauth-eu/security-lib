@@ -34,19 +34,24 @@ public class OA2ConfigurationLoaderUtils extends ConfigUtil {
                     ConfigurationNode currentNode = (ConfigurationNode) kids.get(i);
 
                     String currentScope = (String) currentNode.getValue();
+                    // Ideally we should check for duplicate scopes elements,
+                    // but tomcat does not let us really fail during init()
+                    // hence it's better to just allow multiple scope elements
+                    // and prevent adding them twice.
+
+                    // default: if the enabled flag is omitted, assume it is enabled (i.e. add it)
+                    boolean isEnabled = true;
+
                     String x = Configurations.getFirstAttribute(currentNode, SCOPE_ENABLED);
-                    if (x != null) {
-                        boolean isEnabled = Boolean.parseBoolean(x);
-                        if (isEnabled) {
+                    if (x != null)
+                        isEnabled = Boolean.parseBoolean(x);
+
+                    if (isEnabled) {
+                        // Only add scope when it's not there yet
+                        if (! scopes.contains(currentScope))
                             scopes.add(currentScope);
-
-                        } else {
-                            scopes.remove(currentScope);
-
-                        }
                     } else {
-                        // default is if the enabled flag is omitted, to assume it is enabled and add it.
-                        scopes.add(currentScope);
+                        scopes.remove(currentScope);
                     }
                 }
             }
