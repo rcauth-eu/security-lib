@@ -32,7 +32,6 @@ public abstract class LoggingConfigLoader<T extends AbstractEnvironment> impleme
     protected void loadDebug() {
         String rawDebug = Configurations.getFirstAttribute(cn, ConfigurationTags.DEBUG);
         try {
-            System.err.println(this.getClass().getSimpleName() + ".load: setting debug for \"" + rawDebug + "\"");
             if (rawDebug == null || rawDebug.isEmpty()) {
                 DebugUtil.setDebugLevel(DebugUtil.DEBUG_LEVEL_OFF);
             } else {
@@ -42,6 +41,7 @@ public abstract class LoggingConfigLoader<T extends AbstractEnvironment> impleme
 
         } catch (Throwable t) {
             // ok, so that didn't work, fall back to the old way
+            System.err.println(this.getClass().getSimpleName() + ".load: could not parse \"" + rawDebug + "\" as debug level, parsing as boolean instead");
             DebugUtil.setIsEnabled(Boolean.parseBoolean(rawDebug));
         }
     }
