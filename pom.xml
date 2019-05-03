@@ -36,7 +36,7 @@
         </developer>
     </developers>
     <properties>
-        <revision>4.2</revision>
+        <revision>4.2-RCauth-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <modules>
@@ -129,7 +129,8 @@
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
-                        <phase>verify</phase>
+                        <!--phase>verify</phase-->
+                        <phase>deploy</phase>
                         <goals>
                             <goal>sign</goal>
                         </goals>
