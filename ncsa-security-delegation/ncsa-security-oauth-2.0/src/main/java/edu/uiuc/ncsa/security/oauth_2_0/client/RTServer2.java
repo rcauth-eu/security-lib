@@ -51,7 +51,9 @@ public class RTServer2 extends TokenAwareServer implements RTServer {
         RTResponse rtResponse = createResponse(newAT, refreshTokenImpl2);
         if (oidcEnabled) {
             JSONObject idToken = getAndCheckIDToken(json, rtRequest);
-            rtResponse.setParameters(idToken);
+            HashMap<String, Object> params = new HashMap<>();
+            params.put(OA2Constants.ID_TOKEN, idToken);
+            rtResponse.setParameters(params);
         }
         return rtResponse;
     }
