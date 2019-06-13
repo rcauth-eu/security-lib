@@ -17,25 +17,31 @@ import java.util.Date;
 public class DebugUtil {
 
     /**
+     * NOTE: we've inverted the debug levels, to make SEVERE next to OFF
+     * and INFO next to TRACE. Originally the order was
+     * OFF (0), INFO (1), WARN (2), ERROR (3), SEVERE (4), TRACE (5)
+     */
+
+    /**
      * Turn of debugging
      */
     public static int DEBUG_LEVEL_OFF = 0;
     /**
-     * ONly basic information should be displayed, such as milestones in the control flow
+     * Show error that stop the control flow that probably lead the application to abort of be unrecoverable.
      */
-    public static int DEBUG_LEVEL_INFO = 1;
-    /**
-     * Display warnings about the control flow and possibly harmful things
-     */
-    public static int DEBUG_LEVEL_WARN = 2;
+    public static int DEBUG_LEVEL_SEVERE = 1;
     /**
      * Show errors or possible branch points of errors, but ones that still allow the control flow to continue
      */
-    public static int DEBUG_LEVEL_ERROR = 3;
+    public static int DEBUG_LEVEL_ERROR = 2;
     /**
-     * Show error that stop the control flow that probably lead the application to abort of be unrecoverable.
+     * Display warnings about the control flow and possibly harmful things
      */
-    public static int DEBUG_LEVEL_SEVERE = 4;
+    public static int DEBUG_LEVEL_WARN = 3;
+    /**
+     * ONly basic information should be displayed, such as milestones in the control flow
+     */
+    public static int DEBUG_LEVEL_INFO = 4;
     /**
      * Show detailed information about the execution so that detailed information about the control flow
      * can be seen. Note that this may be extremely verbose.
@@ -43,18 +49,18 @@ public class DebugUtil {
     public static int DEBUG_LEVEL_TRACE = 5;
 
     public static String DEBUG_LEVEL_OFF_LABEL = "OFF";
-    public static String DEBUG_LEVEL_INFO_LABEL = "INFO";
-    public static String DEBUG_LEVEL_WARN_LABEL = "WARN";
-    public static String DEBUG_LEVEL_ERROR_LABEL = "ERROR";
     public static String DEBUG_LEVEL_SEVERE_LABEL = "SEVERE";
+    public static String DEBUG_LEVEL_ERROR_LABEL = "ERROR";
+    public static String DEBUG_LEVEL_WARN_LABEL = "WARN";
+    public static String DEBUG_LEVEL_INFO_LABEL = "INFO";
     public static String DEBUG_LEVEL_TRACE_LABEL = "TRACE";
 
     protected static String toLabel(int level) {
         if (level == DEBUG_LEVEL_OFF) return "";
-        if (level == DEBUG_LEVEL_INFO) return DEBUG_LEVEL_INFO_LABEL;
-        if (level == DEBUG_LEVEL_WARN) return DEBUG_LEVEL_WARN_LABEL;
-        if (level == DEBUG_LEVEL_ERROR) return DEBUG_LEVEL_ERROR_LABEL;
         if (level == DEBUG_LEVEL_SEVERE) return DEBUG_LEVEL_SEVERE_LABEL;
+        if (level == DEBUG_LEVEL_ERROR) return DEBUG_LEVEL_ERROR_LABEL;
+        if (level == DEBUG_LEVEL_WARN) return DEBUG_LEVEL_WARN_LABEL;
+        if (level == DEBUG_LEVEL_INFO) return DEBUG_LEVEL_INFO_LABEL;
         if (level == DEBUG_LEVEL_TRACE) return DEBUG_LEVEL_TRACE_LABEL;
 
         throw new NFWException("INTERNAL ERROR: Unknown debugging level encountered: " + level);
@@ -82,10 +88,10 @@ public class DebugUtil {
 
     protected static int toLevel(String label) {
         if (checkLevelAndLabel(DEBUG_LEVEL_OFF_LABEL, label)) return DEBUG_LEVEL_OFF;
-        if (checkLevelAndLabel(DEBUG_LEVEL_INFO_LABEL, label)) return DEBUG_LEVEL_INFO;
-        if (checkLevelAndLabel(DEBUG_LEVEL_WARN_LABEL, label)) return DEBUG_LEVEL_WARN;
-        if (checkLevelAndLabel(DEBUG_LEVEL_ERROR_LABEL, label)) return DEBUG_LEVEL_ERROR;
         if (checkLevelAndLabel(DEBUG_LEVEL_SEVERE_LABEL, label)) return DEBUG_LEVEL_SEVERE;
+        if (checkLevelAndLabel(DEBUG_LEVEL_ERROR_LABEL, label)) return DEBUG_LEVEL_ERROR;
+        if (checkLevelAndLabel(DEBUG_LEVEL_WARN_LABEL, label)) return DEBUG_LEVEL_WARN;
+        if (checkLevelAndLabel(DEBUG_LEVEL_INFO_LABEL, label)) return DEBUG_LEVEL_INFO;
         if (checkLevelAndLabel(DEBUG_LEVEL_TRACE_LABEL, label)) return DEBUG_LEVEL_TRACE;
 
         throw new NFWException("INTERNAL ERROR: Unknown debugging level encountered:" + label);
@@ -108,7 +114,7 @@ public class DebugUtil {
 
     public static void setIsEnabled(boolean isEnabled) {
         if (isEnabled) {
-            setDebugLevel(DEBUG_LEVEL_WARN); //default
+            setDebugLevel(DEBUG_LEVEL_INFO); //default
         } else {
             setDebugLevel(DEBUG_LEVEL_OFF);
         }
@@ -147,7 +153,7 @@ public class DebugUtil {
     }
 
     /** This only prints if the requested level is at least error AND the current utility supports it.
-     * Note that if ther eis no exception, then that is noted in the log as well.
+     * Note that if there is no exception, then that is noted in the log as well.
      *
      * @param level
      * @param callingClass
@@ -156,7 +162,12 @@ public class DebugUtil {
      */
     public static void printIt(int level, Class callingClass, String message, Throwable throwable) {
 
-        if (DEBUG_LEVEL_ERROR <= level && level <= getDebugLevel()) {
+        /**
+         * NOTE: Originally this was only printed if the level was >= than ERROR,
+         * meaning ERROR, SEVERE or TRACE due to the reverted order (see above).
+         * that should now be <= ERROR, so <= the minimum of ERROR and the debugLevel
+          */
+        if (level <= DEBUG_LEVEL_ERROR && level <= getDebugLevel()) {
             if (throwable == null) {
                 printIt("     =====>> (NO STACKTRACE AVAILABLE)");
             } else {
