@@ -22,7 +22,7 @@ public class LoggerProvider implements Provider<MyLoggingFacade>, LoggingConfigu
     String loggerName = null;
     int fileCount = -1; // default is set in setup(): 1
     int maxFileSize = -1; // default is set in setup(): 1MB
-    boolean appendOn = true; // default: append. TODO appendOn is actually not used
+    boolean appendOn = true; // default: append
     boolean disableLog4j = true; // default: don't use Log4J
 
 
@@ -109,7 +109,7 @@ public class LoggerProvider implements Provider<MyLoggingFacade>, LoggingConfigu
                     } else {
                         logFileName = logFile;
                     }
-                    fileHandler = new FileHandler(logFile, maxFileSize, fileCount, true);
+                    fileHandler = new FileHandler(logFile, maxFileSize, fileCount, appendOn);
                     fileHandler.setFormatter(new SimpleFormatter()); // don't get carried away. XML is really verbose.
                     logger.getLogger().addHandler(fileHandler);
                     logger.getLogger().setUseParentHandlers(false); // suppresses console output.
