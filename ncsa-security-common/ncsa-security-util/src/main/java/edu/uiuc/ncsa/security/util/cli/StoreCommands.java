@@ -346,6 +346,8 @@ public abstract class StoreCommands extends CommonCommands {
         int choice = inputLine.getIntArg(inputLine.size() - 1);
         if (allEntries == null || allEntries.isEmpty()) {
             loadAllEntries(); // just in case...
+            // Make sure to sort the entries according whatever was the previous sort order (or default)
+            allEntries = getSortable().sort(allEntries);
         }
         return allEntries.get(choice);
     }
