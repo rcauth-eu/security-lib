@@ -17,6 +17,16 @@ public class ClientApproval extends IdentifiableImpl {
         super(identifier);
     }
 
+    @Override
+    public IdentifiableImpl clone() {
+        ClientApproval x = new ClientApproval(getIdentifier());
+        x.setApproved(isApproved());
+        x.setApprover(getApprover());
+        x.setApprovalTimestamp(getApprovalTimestamp());
+        x.setStatus(getStatus());
+        return x;
+    }
+
     static final long serialVersionUID = 1714880068599897702L;
     boolean approved;
     String approver;
