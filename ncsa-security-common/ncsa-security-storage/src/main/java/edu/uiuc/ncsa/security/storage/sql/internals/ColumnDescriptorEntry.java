@@ -12,8 +12,18 @@ public class ColumnDescriptorEntry extends DataDescriptorEntry {
         super(name, type);
     }
 
+    public ColumnDescriptorEntry(String name, String options, int type) {
+        super(name, options, type);
+
+    }
+
     public ColumnDescriptorEntry(String name, int type, boolean nullable, boolean primaryKey) {
         super(name, type, nullable);
+        this.primaryKey = primaryKey;
+    }
+
+    public ColumnDescriptorEntry(String name, String options, int type, boolean nullable, boolean primaryKey) {
+        super(name, options, type, nullable);
         this.primaryKey = primaryKey;
     }
 

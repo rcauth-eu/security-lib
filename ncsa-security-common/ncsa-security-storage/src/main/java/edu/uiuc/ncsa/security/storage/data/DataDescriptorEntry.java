@@ -11,8 +11,21 @@ public class DataDescriptorEntry implements Comparable {
         this.type = type;
     }
 
+    public DataDescriptorEntry(String name, String options, int type) {
+        this.name = name;
+        this.options = options;
+        this.type = type;
+    }
+
     public DataDescriptorEntry(String name, int type, boolean nullable) {
         this.name = name;
+        this.nullable = nullable;
+        this.type = type;
+    }
+
+    public DataDescriptorEntry(String name, String options, int type, boolean nullable) {
+        this.name = name;
+        this.options = options;
         this.nullable = nullable;
         this.type = type;
     }
@@ -34,6 +47,7 @@ public class DataDescriptorEntry implements Comparable {
 
 
     String name;
+    String options;
     int type;
 
     /**
@@ -65,6 +79,16 @@ public class DataDescriptorEntry implements Comparable {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    /**
+     * Several types need default options such as TIMESTAMP typically needing DEFAULT CURRENT_TIMESTAMP.
+     * @return options for this descriptor
+     */
+    public String getOptions() { return options; }
+
+    public void setOptions(String options) {
+        this.options = options;
     }
 
     public int compareTo(Object o) {

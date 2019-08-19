@@ -563,8 +563,13 @@ public abstract class SQLStore<V extends Identifiable> extends SQLDatabase imple
         for (ColumnDescriptorEntry cde : cds) {
             if (!foundCols.containsKey(cde.getName().toLowerCase())) {
                 // create the column
-                System.err.println("Adding column " + cde.getName() + " of type " + cde.getType());
-                String rawStmt = "Alter Table " + getTable().getFQTablename() + " add Column " + cde.getName() + " " + jdbcMappings.get(cde.getType());
+                String options = cde.getOptions();
+                String rawStmt;
+                if (options == null)
+                    rawStmt = "Alter Table " + getTable().getFQTablename() + " add Column " + cde.getName() + " " + jdbcMappings.get(cde.getType());
+                else
+                    rawStmt = "Alter Table " + getTable().getFQTablename() + " add Column " + cde.getName() + " " + jdbcMappings.get(cde.getType()) + " " + options;
+                System.err.println("executing: " + rawStmt);
                 stmt.executeUpdate(rawStmt);
             }
         }
