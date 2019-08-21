@@ -140,6 +140,15 @@ public abstract class AbstractServlet extends HttpServlet implements Logable {
     @Override
     public void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
         try {
+
+            /**
+             * Force doPost() to set UTF-8 character encoding for the registration data.
+             * Note that that needs to be done before we actually access the request parameters and only works for POST.
+             * We do it here to cover all the servlets although it's mostly relevant for the registration servlets.
+             * @see <a href="https://stackoverflow.com/questions/33941751/html-form-does-not-send-utf-8-format-inputs">stackoverflow: html-form-does-not-send-utf-8-format-inputs</a>.
+             */
+            httpServletRequest.setCharacterEncoding("UTF-8");
+
             printAllParameters(httpServletRequest);
             if (doPing(httpServletRequest, httpServletResponse)) return;
             /*
