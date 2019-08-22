@@ -226,7 +226,7 @@ public class MailUtil extends TemplateUtil implements Logable {
             message.setFrom(getMailEnvironment().from);
             message.setRecipients(Message.RecipientType.TO, getMailEnvironment().recipients);
             message.setSubject(replaceAll(subjectTemplate, replacements));
-            message.setContent(replaceAll(messageTemplate, replacements), "text/plain");
+            message.setContent(replaceAll(messageTemplate, replacements), "text/plain; charset=utf-8");
             if(replacements.containsKey("reply-to")){
                 InternetAddress address = new InternetAddress((String) replacements.get("reply-to"));
 
