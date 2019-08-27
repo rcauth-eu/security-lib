@@ -39,9 +39,11 @@ public class RTServer2 extends TokenAwareServer implements RTServer {
         if (accessToken.getToken().equals(returnedAT)) {
             throw new IllegalArgumentException("Error: The returned access token from the server should not match the one in the request.");
         }
-        String exp = json.getString(OA2Constants.EXPIRES_IN);
+        // NOTE: OA4MP misuses expires_in for the refresh_token expiry time,
+        // we use instead refresh_token_expires_in for the RT.
+        String exp = json.getString(OA2Constants.RT_EXPIRES_IN);
         if (exp == null || exp.length() == 0) {
-            throw new IllegalArgumentException("Error: missing expires_in field from server");
+            throw new IllegalArgumentException("Error: missing "+OA2Constants.RT_EXPIRES_IN+" field from server");
         }
         long expiresIn = Long.parseLong(exp) * 1000;
 

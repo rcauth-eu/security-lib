@@ -1,5 +1,6 @@
 package edu.uiuc.ncsa.security.oauth_2_0.server;
 
+import edu.uiuc.ncsa.security.core.util.DateUtils;
 import edu.uiuc.ncsa.security.delegation.server.ServiceTransaction;
 import edu.uiuc.ncsa.security.delegation.token.AccessToken;
 import edu.uiuc.ncsa.security.delegation.token.RefreshToken;
@@ -119,9 +120,14 @@ public abstract class IDTokenResponse extends IResponse2 {
         HashMap m = new HashMap();
         m.put(ACCESS_TOKEN, accessToken.getToken());
         m.put(TOKEN_TYPE, "Bearer");
+        // NOTE: OA4MP misuses expires_in for the refresh_token expiry time,
+        // we fix it and use instead refresh_token_expires_in for the RT and
+        // expires_in for the AT. Although it's currently hard-coded, there is
+        // no harm in returning it.
+        m.put(EXPIRES_IN, DateUtils.MAX_TIMEOUT / 1000);
         if (getRefreshToken() != null && getRefreshToken().getToken() != null) {
             m.put(REFRESH_TOKEN, getRefreshToken().getToken());
-            m.put(EXPIRES_IN, (getRefreshToken().getExpiresIn() / 1000));
+            m.put(RT_EXPIRES_IN, (getRefreshToken().getExpiresIn() / 1000));
         }
         if (!getSupportedScopes().isEmpty()) {
             // construct the scope response.

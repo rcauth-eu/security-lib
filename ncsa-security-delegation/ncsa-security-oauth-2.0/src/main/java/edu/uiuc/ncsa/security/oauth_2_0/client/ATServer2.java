@@ -106,8 +106,10 @@ public class ATServer2 extends TokenAwareServer implements ATServer {
             // the refresh token is optional, so if it is missing then there is nothing to do.
             rt = new OA2RefreshTokenImpl(URI.create(jsonObject.getString(REFRESH_TOKEN)));
             try {
-                if (jsonObject.containsKey(EXPIRES_IN)) {
-                    long expiresIn = Long.parseLong(jsonObject.getString(EXPIRES_IN)) * 1000L; // convert from sec to ms.
+                // NOTE: OA4MP misuses expires_in for the refresh_token expiry time,
+                // we use instead refresh_token_expires_in for the RT.
+                if (jsonObject.containsKey(RT_EXPIRES_IN)) {
+                    long expiresIn = Long.parseLong(jsonObject.getString(RT_EXPIRES_IN)) * 1000L; // convert from sec to ms.
                     rt.setExpiresIn(expiresIn);
                 }
             } catch (NumberFormatException nfx) {

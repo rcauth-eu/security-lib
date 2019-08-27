@@ -18,6 +18,7 @@ public interface OA2Constants {
     public static String ERROR_DESCRIPTION = "error_description";
     public static String ERROR_URI = "error_uri";
     public static String EXPIRES_IN = "expires_in";
+    public static String RT_EXPIRES_IN = "refresh_token_expires_in";
     public static String GRANT_TYPE = "grant_type";
     public static String NONCE = "nonce";
     public static String PROMPT = "prompt";
