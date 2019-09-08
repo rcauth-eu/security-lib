@@ -31,7 +31,11 @@ public class MySQLConnectionPoolProvider extends ConnectionPoolProvider<MySQLCon
          super(database, schema);
 
          // Note: driver classname is renamed from "com.mysql.jdbc.Driver" to "com.mysql.cj.jdbc.Driver"
-         driver = "com.mysql.cj.jdbc.Driver";
+         //       in mysql-connector-java 8.
+         // Use 5.1 for mysql-5.1 (or at least <5.5) such as CentOS6, see
+         // https://dev.mysql.com/doc/relnotes/connector-j/8.0/en/news-8-0-11.html
+//       driver = "com.mysql.cj.jdbc.Driver";
+         driver = "com.mysql.jdbc.Driver";
          port = 3306;
          host = "localhost";
     }

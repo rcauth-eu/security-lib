@@ -36,7 +36,7 @@
         </developer>
     </developers>
     <properties>
-        <revision>4.2-RCauth-SNAPSHOT</revision>
+        <revision>4.2-RCauth-CentOS6-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <modules>
