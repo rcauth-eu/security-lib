@@ -21,7 +21,7 @@ Both are requirements for the RCauth.eu codebase, including the RCauth
 1. Check out the right RCauth-based branch, see the different RCauth components for the required versions.  
    For example:
 
-        git checkout 4.2-RCauth
+        git checkout 4.2-RCauth-devel
 
    *Make sure to use the same branch or tag for the OA4MP and security-lib components !!*
 
@@ -31,4 +31,4 @@ Both are requirements for the RCauth.eu codebase, including the RCauth
 
 ## Background and further reading
 
-https://wiki.nikhef.nl/grid/AARC_Pilot
+https://wiki.nikhef.nl/grid/RCauth.eu_and_MasterPortal_documentation
