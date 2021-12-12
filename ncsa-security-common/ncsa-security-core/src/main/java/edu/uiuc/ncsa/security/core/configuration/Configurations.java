@@ -7,9 +7,6 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,11 +32,7 @@ public class Configurations {
      * It is annoying to have to add a dependency to clean up after someone else!
      */
     public static void killLog4J() {
-        List<Logger> loggers = Collections.<Logger>list(LogManager.getCurrentLoggers());
-        loggers.add(LogManager.getRootLogger());
-        for (Logger logger : loggers) {
-            logger.setLevel(Level.OFF);
-        }
+        System.out.println("Warning: cannot kill log4j since we don't want to depend on log4j");
     }
 
     /**
