@@ -2,7 +2,7 @@ package edu.uiuc.ncsa.security.oauth_2_0.server.config;
 
 import edu.uiuc.ncsa.security.util.functor.JFunctorFactory;
 import edu.uiuc.ncsa.security.util.functor.parser.Script;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 
 import javax.inject.Provider;
 /**

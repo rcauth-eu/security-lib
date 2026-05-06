@@ -2,8 +2,9 @@ package edu.uiuc.ncsa.security.util.json;
 
 import edu.uiuc.ncsa.security.core.Identifier;
 import edu.uiuc.ncsa.security.core.util.IdentifiableImpl;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import edu.uiuc.ncsa.security.util.json.MyJSONUtil;
+import org.kordamp.json.JSONArray;
+import org.kordamp.json.JSONObject;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -87,7 +88,7 @@ public class JSONEntry extends IdentifiableImpl {
             return new LinkedList<>();
         }
         try {
-            return JSONArray.fromObject(rawContent);
+            return MyJSONUtil.arraytoList(JSONArray.fromObject(rawContent));
         }catch(Throwable t){
             throw new IllegalStateException("Error: This is not an array/ Message is \"" + t.getMessage() + "\"");
 

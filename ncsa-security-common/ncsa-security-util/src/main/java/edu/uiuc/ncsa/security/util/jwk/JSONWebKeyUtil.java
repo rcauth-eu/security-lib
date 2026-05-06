@@ -1,8 +1,8 @@
 package edu.uiuc.ncsa.security.util.jwk;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
+import org.kordamp.json.JSONArray;
+import org.kordamp.json.JSONObject;
+import org.kordamp.json.JSONSerializer;
 import org.apache.commons.codec.binary.Base64;
 
 import java.io.BufferedReader;

@@ -1,6 +1,6 @@
 package edu.uiuc.ncsa.security.util.functor;
 
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 
 /**
  * Interface for functor like things that are defined in JSON. These can execute something.

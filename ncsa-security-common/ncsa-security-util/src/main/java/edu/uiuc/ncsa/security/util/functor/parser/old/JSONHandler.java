@@ -1,7 +1,7 @@
 package edu.uiuc.ncsa.security.util.functor.parser.old;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONArray;
+import org.kordamp.json.JSONObject;
 
 /**
  * Parses functional notation into a JSON object.

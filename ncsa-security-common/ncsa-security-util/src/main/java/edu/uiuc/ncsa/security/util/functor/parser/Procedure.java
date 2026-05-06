@@ -8,7 +8,7 @@ import edu.uiuc.ncsa.security.util.functor.JFunctorFactory;
 import edu.uiuc.ncsa.security.util.functor.JMetaMetaFunctor;
 import edu.uiuc.ncsa.security.util.json.JSONEntry;
 import edu.uiuc.ncsa.security.util.json.JSONStore;
-import net.sf.json.JSONArray;
+import org.kordamp.json.JSONArray;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -262,9 +262,13 @@ public class Procedure extends AbstractScript implements JMetaMetaFunctor {
     }
 
     public JSONArray toJSON() {
-        if (rawContent instanceof JSONArray) {
+// rawContent is defined as List<String> and for new org.kordamp.json.JSONArray
+// this cannot be converted to a JSONArray (unlike for old
+// net.sf.json.JSONArray)
+/*      if (rawContent instanceof JSONArray) {
             return (JSONArray) rawContent;
         }
+*/
         JSONArray array = new JSONArray();
         for (String x : rawContent) {
             array.add(x);

@@ -1,6 +1,6 @@
 package edu.uiuc.ncsa.security.delegation.storage;
 
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 
 /**
  * Budding collection of useful tools for creating complex JSON objects.

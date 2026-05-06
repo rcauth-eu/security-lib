@@ -7,8 +7,8 @@ import edu.uiuc.ncsa.security.util.functor.strings.*;
 import edu.uiuc.ncsa.security.util.functor.system.jRaiseError;
 import edu.uiuc.ncsa.security.util.functor.system.jgetEnv;
 import edu.uiuc.ncsa.security.util.functor.system.jsetEnv;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONArray;
+import org.kordamp.json.JSONObject;
 import org.junit.Test;
 
 import java.util.List;

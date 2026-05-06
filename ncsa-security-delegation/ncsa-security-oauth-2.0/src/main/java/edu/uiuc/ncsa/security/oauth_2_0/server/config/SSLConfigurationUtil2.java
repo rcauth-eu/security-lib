@@ -3,7 +3,7 @@ package edu.uiuc.ncsa.security.oauth_2_0.server.config;
 import edu.uiuc.ncsa.security.delegation.storage.JSONUtil;
 import edu.uiuc.ncsa.security.util.ssl.SSLConfiguration;
 import edu.uiuc.ncsa.security.util.ssl.SSLConfigurationUtil;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;

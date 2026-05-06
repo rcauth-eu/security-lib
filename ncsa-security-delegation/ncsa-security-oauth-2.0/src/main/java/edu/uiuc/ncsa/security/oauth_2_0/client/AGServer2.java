@@ -8,7 +8,7 @@ import edu.uiuc.ncsa.security.oauth_2_0.NonceHerder;
 import edu.uiuc.ncsa.security.oauth_2_0.OA2Constants;
 import edu.uiuc.ncsa.security.oauth_2_0.OA2Scopes;
 import edu.uiuc.ncsa.security.servlet.ServiceClient;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 import org.apache.commons.codec.binary.Hex;
 
 import java.net.URI;

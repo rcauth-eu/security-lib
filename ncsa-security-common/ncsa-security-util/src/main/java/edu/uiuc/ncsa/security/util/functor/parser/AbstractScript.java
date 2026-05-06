@@ -4,7 +4,7 @@ import edu.uiuc.ncsa.security.core.exceptions.GeneralException;
 import edu.uiuc.ncsa.security.util.functor.JFunctorFactory;
 import edu.uiuc.ncsa.security.util.functor.logic.FunctorMap;
 import edu.uiuc.ncsa.security.util.functor.parser.event.*;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 
 import java.io.File;
 import java.io.FileReader;

@@ -1,7 +1,7 @@
 package edu.uiuc.ncsa.security.oauth_2_0.server.config;
 
 import edu.uiuc.ncsa.security.oauth_2_0.server.claims.ClaimSourceConfiguration;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 
 /**
  * All components that are configurations should probably

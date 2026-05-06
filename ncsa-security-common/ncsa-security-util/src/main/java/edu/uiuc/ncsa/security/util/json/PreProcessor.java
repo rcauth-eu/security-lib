@@ -3,9 +3,9 @@ package edu.uiuc.ncsa.security.util.json;
 import edu.uiuc.ncsa.security.core.Identifier;
 import edu.uiuc.ncsa.security.core.exceptions.CircularReferenceException;
 import edu.uiuc.ncsa.security.core.util.BasicIdentifier;
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSON;
+import org.kordamp.json.JSONArray;
+import org.kordamp.json.JSONObject;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -82,7 +82,9 @@ public class PreProcessor {
 
     public JSON execute(JSONObject object, Set<String> ids) {
         JSONObject newObject = new JSONObject();
-        for (Object key : object.keySet()) {
+        // See https://github.com/ncsa/security-lib/commit/0a3208b44d8b8d359628d0a2d68627fc319b6a47#diff-066edd6e6b4233a38911a40e94e3f5c8cc0812ba90ba9856a34d44b3a62cfae3
+        for (Object xxx : object.keySet()) { // has to be a string
+            String key = xxx.toString();
             if (key.toString().equals(IMPORT_DIRECTIVE)) {
                 Object storeKeyObject = object.get(key);
                 Identifier storeKey = null;
@@ -109,7 +111,8 @@ public class PreProcessor {
                         // The next snippet allows for over-rides: If there is already an existing key/value then
                         // it is preserved. The stored object never has the right of way.
                         storedObj = (JSONObject) execute(storedObj, ids); // return JSON object since that cannot change here.
-                        for(Object key2 : storedObj.keySet()){
+                        for(Object yyy : storedObj.keySet()){
+                            String key2 = yyy.toString();
                             if(!newObject.containsKey(key2)){
                                 newObject.put(key2, storedObj.get(key2));
                             }

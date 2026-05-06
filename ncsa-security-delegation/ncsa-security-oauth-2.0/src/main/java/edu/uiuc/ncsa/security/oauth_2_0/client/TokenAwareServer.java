@@ -7,7 +7,7 @@ import edu.uiuc.ncsa.security.delegation.client.request.BasicRequest;
 import edu.uiuc.ncsa.security.oauth_2_0.JWTUtil;
 import edu.uiuc.ncsa.security.servlet.ServiceClient;
 import edu.uiuc.ncsa.security.util.jwk.JSONWebKeys;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;

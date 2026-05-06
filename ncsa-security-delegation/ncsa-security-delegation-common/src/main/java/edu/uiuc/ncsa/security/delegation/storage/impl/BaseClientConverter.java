@@ -9,7 +9,7 @@ import edu.uiuc.ncsa.security.delegation.storage.JSONUtil;
 import edu.uiuc.ncsa.security.storage.data.ConversionMap;
 import edu.uiuc.ncsa.security.storage.data.MapConverter;
 import edu.uiuc.ncsa.security.storage.data.SerializationKeys;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONObject;
 
 import java.text.ParseException;
 

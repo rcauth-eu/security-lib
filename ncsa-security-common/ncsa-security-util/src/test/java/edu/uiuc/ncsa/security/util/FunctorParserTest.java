@@ -9,8 +9,8 @@ import edu.uiuc.ncsa.security.util.functor.parser.event.ConditionalHandler;
 import edu.uiuc.ncsa.security.util.functor.parser.event.EventDrivenParser;
 import edu.uiuc.ncsa.security.util.functor.parser.event.FunctorHandler;
 import edu.uiuc.ncsa.security.util.functor.parser.event.SwitchHandler;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONArray;
+import org.kordamp.json.JSONObject;
 import org.junit.Test;
 
 import java.io.File;

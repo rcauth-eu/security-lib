@@ -1,8 +1,8 @@
 package edu.uiuc.ncsa.security.oauth_2_0.server.claims;
 
 import edu.uiuc.ncsa.security.util.functor.FunctorTypeImpl;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONArray;
+import org.kordamp.json.JSONObject;
 
 import java.util.LinkedList;
 import java.util.List;

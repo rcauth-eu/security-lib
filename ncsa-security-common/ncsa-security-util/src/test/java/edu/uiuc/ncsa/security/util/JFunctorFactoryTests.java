@@ -3,8 +3,8 @@ package edu.uiuc.ncsa.security.util;
 import edu.uiuc.ncsa.security.util.functor.*;
 import edu.uiuc.ncsa.security.util.functor.logic.jAnd;
 import edu.uiuc.ncsa.security.util.functor.logic.jTrue;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONArray;
+import org.kordamp.json.JSONObject;
 import org.junit.Test;
 
 /**

@@ -2,7 +2,7 @@ package edu.uiuc.ncsa.security.util.functor.strings;
 
 import edu.uiuc.ncsa.security.util.functor.FunctorTypeImpl;
 import edu.uiuc.ncsa.security.util.functor.JFunctorImpl;
-import net.sf.json.JSONArray;
+import org.kordamp.json.JSONArray;
 
 import java.util.StringTokenizer;
 

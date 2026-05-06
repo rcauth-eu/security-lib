@@ -4,8 +4,8 @@ import edu.uiuc.ncsa.security.core.exceptions.NFWException;
 import edu.uiuc.ncsa.security.core.util.DebugUtil;
 import edu.uiuc.ncsa.security.util.functor.logic.FunctorMap;
 import edu.uiuc.ncsa.security.util.functor.logic.jThen;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import org.kordamp.json.JSONArray;
+import org.kordamp.json.JSONObject;
 
 import java.util.LinkedList;
 import java.util.List;

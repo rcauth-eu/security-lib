@@ -2,14 +2,18 @@ package edu.uiuc.ncsa.security.oauth_2_0.server.claims;
 
 import edu.uiuc.ncsa.security.core.util.MyLoggingFacade;
 import edu.uiuc.ncsa.security.delegation.storage.JSONUtil;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import edu.uiuc.ncsa.security.util.json.MyJSONUtil;
+import org.kordamp.json.JSONArray;
+import org.kordamp.json.JSONObject;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 
 import static edu.uiuc.ncsa.security.core.configuration.Configurations.getFirstAttribute;
 import static edu.uiuc.ncsa.security.core.configuration.Configurations.getNodeValue;
 import static edu.uiuc.ncsa.security.oauth_2_0.server.config.ClientConfigurationUtil.CLAIM_POST_PROCESSING_KEY;
 import static edu.uiuc.ncsa.security.oauth_2_0.server.config.ClientConfigurationUtil.CLAIM_PRE_PROCESSING_KEY;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is a utility that will take a claim source and make a configuration for it.
@@ -98,7 +102,7 @@ public class ClaimSourceConfigurationUtil {
        String omitList = getNodeValue(node, OMIT_CLAIMS_LIST_TAG);
         if(omitList!= null && !omitList.isEmpty()){
             JSONArray array = JSONArray.fromObject(omitList);
-            config.setOmitList(array);
+            config.setOmitList(MyJSONUtil.arraytoList(array));
         }
         return config;
     }
@@ -124,7 +128,7 @@ public class ClaimSourceConfigurationUtil {
         jsonUtil.setJSONValue(jsonConfig, CLAIM_POST_PROCESSING_KEY, config.getRawPostProcessor());
         if (config.getOmitList() != null && !config.getOmitList().isEmpty()) {
             JSONArray omitList = null;
-            if (config.getOmitList() instanceof JSONArray) {
+            if (config.getOmitList() instanceof List<?>) {
                 jsonUtil.setJSONValue(jsonConfig, OMIT_CLAIMS_LIST_TAG, config.getOmitList());
             } else {
                 omitList = new JSONArray();
@@ -162,7 +166,7 @@ public class ClaimSourceConfigurationUtil {
         // CIL-513 fix
         Object rawOmitList = jsonUtil.getJSONValue(json, OMIT_CLAIMS_LIST_TAG);
         if (rawOmitList == null) {
-            config.setOmitList(new JSONArray());
+            config.setOmitList(new ArrayList<>());
         }else{
             JSONArray array = null;
             if (rawOmitList instanceof JSONArray) {
@@ -170,7 +174,7 @@ public class ClaimSourceConfigurationUtil {
             } else {
                 array = JSONArray.fromObject(rawOmitList);
             }
-            config.setOmitList(array);
+            config.setOmitList(MyJSONUtil.arraytoList(array));
         }
         config.setRawPreProcessor(jsonUtil.getJSONValueString(json, CLAIM_PRE_PROCESSING_KEY));
         config.setRawPostProcessor(jsonUtil.getJSONValueString(json, CLAIM_POST_PROCESSING_KEY));
